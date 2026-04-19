@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>宝宝辅食菜谱</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #FF6B6B;
+      --primary-light: #FFE0E0;
+      --secondary: #4ECDC4;
+      --secondary-light: #E0F7F5;
+      --accent: #FFE66D;
+      --accent-light: #FFF8DC;
+      --bg: #FFF9F5;
+      --text: #2D3436;
+      --text-light: #636E72;
+      --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      --card-radius: 16px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    /* 顶部导航 */
+    .header {
+      background: linear-gradient(135deg, var(--primary), #FF8E8E);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .header p {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    /* 搜索栏 */
+    .search-bar {
+      padding: 16px 20px 8px;
+      position: sticky;
+      top: 68px;
+      z-index: 99;
+      background: var(--bg);
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border: 2px solid #eee;
+      border-radius: 25px;
+      font-size: 15px;
+      outline: none;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") 14px center no-repeat;
+      transition: border-color 0.3s;
+    }
+    .search-bar input:focus {
+      border-color: var(--primary);
+    }
+
+    /* 分类标签 */
+    .tags {
+      display: flex;
+      gap: 8px;
+      padding: 12px 20px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tags::-webkit-scrollbar { display: none; }
+    .tag {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1.5px solid #eee;
+      background: white;
+      color: var(--text-light);
+    }
+    .tag.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* 菜谱列表 */
+    .recipe-list {
+      padding: 8px 20px;
+    }
+
+    .recipe-card {
+      background: white;
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    .recipe-card:active {
+      transform: scale(0.98);
+    }
+
+    .recipe-card-header {
+      padding: 16px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .recipe-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .recipe-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .recipe-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    .recipe-meta span {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .recipe-tags {
+      padding: 0 16px 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .recipe-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      background: #f5f5f5;
+      color: var(--text-light);
+    }
+
+    /* 菜谱详情弹窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal {
+      background: white;
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 0;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      background: #ddd;
+      border-radius: 2px;
+      margin: 12px auto;
+    }
+    .modal-header {
+      padding: 8px 20px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .modal-header .recipe-icon {
+      width: 56px;
+      height: 56px;
+      font-size: 30px;
+    }
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .modal-header .recipe-meta {
+      margin-top: 4px;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: #f0f0f0;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+    }
+
+    .modal-section {
+      padding: 0 20px 20px;
+    }
+    .modal-section h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ingredients-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .ingredient-item {
+      background: #FFF5F5;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .ingredient-item .amount {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .steps-list {
+      counter-reset: step;
+    }
+    .step-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .tips-box {
+      background: var(--accent-light);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #8B7355;
+    }
+    .tips-box p {
+      margin-bottom: 4px;
+    }
+
+    .video-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #00A1D6, #00B5E5);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+    .video-btn:active {
+      opacity: 0.8;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
+    }
+    .empty-state .emoji {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .empty-state p {
+      font-size: 15px;
+    }
+
+    /* 底部导航 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 env(safe-area-inset-bottom, 8px);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 11px;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 4px 12px;
+    }
+    .nav-item.active {
+      color: var(--primary);
+    }
+    .nav-item .nav-icon {
+      font-size: 22px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍼 宝宝辅食菜谱</h1>
+  <p>营养搭配 · 科学喂养 · 快乐成长</p>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="搜索菜谱、食材..." oninput="filterRecipes()" />
+</div>
+
+<div class="tags" id="tagBar"></div>
+
+<div class="recipe-list" id="recipeList"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active">
+    <span class="nav-icon">📖</span>
+    <span>菜谱</span>
+  </div>
+  <div class="nav-item" onclick="showRandomRecipe()">
+    <span class="nav-icon">🎲</span>
+    <span>随机</span>
+  </div>
+  <div class="nav-item" onclick="showAbout()">
+    <span class="nav-icon">💡</span>
+    <span>关于</span>
+  </div>
+</div>
+
+<script>
+  // ==================== 菜谱数据 ====================
+  const recipes = [
+    {
+      name: "莲藕腐竹炖排骨",
+      icon: "🍖",
+      iconBg: "#FFE0E0",
+      category: "汤煲类",
+      age: "18月+",
+      time: "60分钟",
+      difficulty: "中等",
+      tags: ["补钙", "高蛋白", "秋冬滋补"],
+      ingredients: [
+        { name: "排骨", amount: "300克" },
+        { name: "莲藕", amount: "1节" },
+        { name: "腐竹", amount: "50克" },
+        { name: "姜片", amount: "3片" },
+        { name: "料酒", amount: "适量" },
+        { name: "盐", amount: "少许" },
+        { name: "葱段", amount: "适量" },
+        { name: "枸杞", amount: "少许" }
+      ],
+      steps: [
+        "腐竹提前用温水泡发30分钟至软，剪成小段备用。",
+        "排骨剁成小段，冷水下锅，加入姜片和料酒，大火烧开焯去血沫，捞出用温水冲洗干净。",
+        "莲藕去皮切成滚刀块（选粉藕口感更软糯，适合宝宝吃）。",
+        "砂锅中加入足量热水，放入焯好的排骨和姜片，大火烧开后转小火慢炖30分钟。",
+        "加入莲藕块继续炖20分钟，直到莲藕变得软糯。",
+        "最后放入泡好的腐竹段和枸杞，再炖10分钟。",
+        "出锅前加少许盐调味，撒上葱段即可。宝宝吃的部分少放盐。"
+      ],
+      tips: [
+        "💡 莲藕选粉藕（短胖、表皮发褐），炖出来更软糯，脆藕不适合宝宝。",
+        "💡 腐竹不要泡太久，半软即可放入，否则容易煮烂。",
+        "💡 排骨焯水一定要冷水下锅，这样血沫去得更干净。",
+        "💡 给小月龄宝宝吃时，可以把排骨肉剔下来切碎，莲藕和腐竹也切小。"
+      ],
+      videoSearch: "莲藕腐竹炖排骨 做法"
+    },
+    {
+      name: "菠萝肉沫炒饭",
+      icon: "🍍",
+      iconBg: "#FFF3DC",
+      category: "主食类",
+      age: "18月+",
+      time: "20分钟",
+      difficulty: "简单",
+      tags: ["开胃", "维生素C", "酸甜可口"],
+      ingredients: [
+        { name: "隔夜米饭", amount: "1碗" },
+        { name: "菠萝", amount: "1/4个" },
+        { name: "猪肉沫", amount: "50克" },
+        { name: "鸡蛋", amount: "1个" },
+        { name: "胡萝卜", amount: "半根" },
+        { name: "青豆", amount: "一小把" },
+        { name: "生抽", amount: "少许" },
+        { name: "食用油", amount: "适量" }
+      ],
+      steps: [
+        "菠萝切小丁，用淡盐水浸泡10分钟去涩味，沥干备用。",
+        "胡萝卜切成小丁，青豆提前焯水备用。",
+        "鸡蛋打散，锅中放少许油，倒入蛋液炒成碎蛋花盛出。",
+        "锅中再加少许油，放入肉沫翻炒至变色发白，炒散。",
+        "加入胡萝卜丁和青豆一起翻炒2分钟至胡萝卜变软。",
+        "倒入米饭，用锅铲压散，中火不断翻炒让米饭粒粒分明。",
+        "加入菠萝丁和蛋花，翻炒均匀，淋少许生抽调味。",
+        "翻炒1分钟让菠萝香味融入米饭，出锅即可。"
+      ],
+      tips: [
+        "💡 一定用隔夜饭，水分少才能炒得粒粒分明不粘连。",
+        "💡 菠萝用盐水泡过后口感更甜，宝宝更容易接受。",
+        "💡 肉沫建议选前腿肉，有肥有瘦，炒出来香而不柴。",
+        "💡 宝宝月龄小的话，食材都切得更碎一些，米饭也可以稍微压软。"
+      ],
+      videoSearch: "菠萝肉沫炒饭 做法"
+    },
+    {
+      name: "牛肉末土豆泥",
+      icon: "🥔",
+      iconBg: "#FFF0DC",
+      category: "泥糊类",
+      age: "9月+",
+      time: "30分钟",
+      difficulty: "简单",
+      tags: ["补铁", "高蛋白", "好消化"],
+      ingredients: [
+        { name: "牛里脊肉", amount: "50克" },
+        { name: "土豆", amount: "1个(中)" },
+        { name: "胡萝卜", amount: "半根" },
+        { name: "蛋黄", amount: "1个" },
+        { name: "姜片", amount: "2片" },
+        { name: "温水", amount: "适量" }
+      ],
+      steps: [
+        "牛里脊肉剔除筋膜，切成薄片，冷水浸泡15分钟去血水。",
+        "牛肉片冷水下锅，加姜片，煮熟后捞出切成小碎末（越碎越好）。",
+        "土豆和胡萝卜去皮切小丁，上锅蒸20分钟至完全软透。",
+        "蒸好的土豆和胡萝卜用勺子压成细腻的泥状。",
+        "将牛肉末加入土豆泥中，混合均匀。",
+        "打入一个蛋黄搅拌均匀（蛋黄能让口感更顺滑）。",
+        "加入少量温水调整到合适的稀稠度，搅拌至顺滑。",
+        "放入蒸锅再蒸10分钟，让蛋黄完全熟透即可。"
+      ],
+      tips: [
+        "💡 牛肉一定要选里脊部位，最嫩最适合宝宝，记得去筋膜。",
+        "💡 切薄片再泡水，血水泡出来更彻底，煮的时候浮沫少。",
+        "💡 土豆蒸到筷子能轻松穿透的程度才算熟透。",
+        "💡 可以一次多做一些，分装到辅食盒里冷冻保存，吃的时候蒸热即可。",
+        "💡 8-9月龄宝宝打成细腻泥状，10月龄+可以保留一些小颗粒锻炼咀嚼。"
+      ],
+      videoSearch: "牛肉土豆泥 宝宝辅食 做法"
+    }
+  ];
+
+  // ==================== 分类标签 ====================
+  const categories = ["全部", "汤煲类", "主食类", "泥糊类"];
+  let activeCategory = "全部";
+
+  function renderTags() {
+    const tagBar = document.getElementById("tagBar");
+    tagBar.innerHTML = categories.map(cat => 
+      `<div class="tag ${cat === activeCategory ? 'active' : ''}" onclick="selectCategory('${cat}')">${cat}</div>`
+    ).join("");
+  }
+
+  function selectCategory(cat) {
+    activeCategory = cat;
+    renderTags();
+    filterRecipes();
+  }
+
+  // ==================== 渲染菜谱列表 ====================
+  function filterRecipes() {
+    const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+    const filtered = recipes.filter(r => {
+      const matchCategory = activeCategory === "全部" || r.category === activeCategory;
+      const matchKeyword = !keyword || 
+        r.name.toLowerCase().includes(keyword) ||
+        r.tags.some(t => t.toLowerCase().includes(keyword)) ||
+        r.ingredients.some(i => i.name.toLowerCase().includes(keyword)) ||
+        r.category.toLowerCase().includes(keyword);
+      return matchCategory && matchKeyword;
+    });
+    renderRecipeList(filtered);
+  }
+
+  function renderRecipeList(list) {
+    const container = document.getElementById("recipeList");
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">🔍</div>
+          <p>没有找到匹配的菜谱</p>
+        </div>`;
+      return;
+    }
+    container.innerHTML = list.map((r, idx) => `
+      <div class="recipe-card" onclick="openRecipe(${recipes.indexOf(r)})">
+        <div class="recipe-card-header">
+          <div class="recipe-icon" style="background:${r.iconBg}">${r.icon}</div>
+          <div class="recipe-info">
+            <h3>${r.name}</h3>
+            <div class="recipe-meta">
+              <span>👶 ${r.age}</span>
+              <span>⏱ ${r.time}</span>
+              <span>📊 ${r.difficulty}</span>
+            </div>
+          </div>
+        </div>
+        <div class="recipe-tags">
+          ${r.tags.map(t => `<span class="recipe-tag">${t}</span>`).join("")}
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // ==================== 菜谱详情弹窗 ====================
+  function openRecipe(idx) {
+    const r = recipes[idx];
+    const modal = document.getElementById("modalContent");
+    modal.innerHTML = `
+      <div class="modal-header">
+        <div class="recipe-icon" style="background:${r.iconBg}">${r.icon}</div>
+        <div>
+          <h2>${r.name}</h2>
+          <div class="recipe-meta">
+            <span>👶 ${r.age}</span>
+            <span>⏱ ${r.time}</span>
+            <span>📊 ${r.difficulty}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-section">
+        <h4>🥬 食材准备</h4>
+        <div class="ingredients-grid">
+          ${r.ingredients.map(i => `
+            <div class="ingredient-item">
+              <span>${i.name}</span>
+              <span class="amount">${i.amount}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h4>👩‍🍳 制作步骤</h4>
+        <div class="steps-list">
+          ${r.steps.map((s, i) => `
+            <div class="step-item">
+              <div class="step-num">${i + 1}</div>
+              <div class="step-text">${s}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h4>📝 小贴士</h4>
+        <div class="tips-box">
+          ${r.tips.map(t => `<p>${t}</p>`).join("")}
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <button class="video-btn" onclick="searchVideo('${r.videoSearch}')">
+          📺 在B站搜索教学视频
+        </button>
+      </div>
+    `;
+    document.getElementById("modalOverlay").classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal(e) {
+    if (e && e.target !== document.getElementById("modalOverlay")) return;
+    document.getElementById("modalOverlay").classList.remove("show");
+    document.body.style.overflow = "";
+  }
+
+  function searchVideo(keyword) {
+    const url = `https://search.bilibili.com/all?keyword=${encodeURIComponent(keyword)}`;
+    window.open(url, "_blank");
+  }
+
+  // ==================== 随机推荐 ====================
+  function showRandomRecipe() {
+    const idx = Math.floor(Math.random() * recipes.length);
+    openRecipe(idx);
+  }
+
+  // ==================== 关于 ====================
+  function showAbout() {
+    const modal = document.getElementById("modalContent");
+    modal.innerHTML = `
+      <div style="padding: 20px; text-align: center;">
+        <div style="font-size: 64px; margin: 20px 0;">🍼</div>
+        <h2 style="margin-bottom: 8px;">宝宝辅食菜谱</h2>
+        <p style="color: var(--text-light); margin-bottom: 20px;">为宝宝的每一餐用心准备</p>
+        <div class="tips-box" style="text-align: left;">
+          <p>🌟 精选适合宝宝的营养菜谱</p>
+          <p>🌟 每道菜标注适合月龄</p>
+          <p>🌟 详细步骤 + 贴心小贴士</p>
+          <p>🌟 一键搜索B站教学视频</p>
+          <p style="margin-top: 8px; font-size: 12px; color: #aaa;">Made with ❤️ for Baby</p>
+        </div>
+      </div>
+    `;
+    document.getElementById("modalOverlay").classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+
+  // ==================== 初始化 ====================
+  renderTags();
+  filterRecipes();
+</script>
+</body>
+</html>
