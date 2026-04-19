@@ -386,7 +386,9 @@
 </div>
 
 <div class="tags" id="tagBar"></div>
+<div class="tags" id="mealBar" style="padding-top:4px;"></div>
 
+<div class="recipe-count" id="recipeCount" style="padding:4px 20px 0;font-size:12px;color:var(--text-light);"></div>
 <div class="recipe-list" id="recipeList"></div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
@@ -412,605 +414,93 @@
   </div>
 </div>
 
+<script src="recipes.js"></script>
 <script>
-  // ==================== 菜谱数据 ====================
-  const recipes = [
-    // ───────── 泥糊类 ─────────
-    {
-      name: "南瓜泥",
-      icon: "🎃",
-      iconBg: "#FFF3DC",
-      category: "泥糊类",
-      age: "6月+",
-      time: "20分钟",
-      difficulty: "简单",
-      tags: ["入门辅食", "维生素A", "好消化"],
-      ingredients: [
-        { name: "南瓜", amount: "100克" },
-        { name: "温开水", amount: "适量" }
-      ],
-      steps: [
-        "南瓜去皮去籽，切成小薄片。",
-        "上锅蒸15-20分钟，直到筷子能轻松穿透。",
-        "取出蒸好的南瓜，趁热用勺子压成泥。",
-        "加少量温开水调整浓稠度，搅拌至顺滑即可。"
-      ],
-      tips: [
-        "💡 选贝贝南瓜或板栗南瓜，甜度高、粉糯，宝宝爱吃。",
-        "💡 6月龄初加辅食建议打成细腻泥状，大月龄可保留小颗粒。",
-        "💡 可搭配米粉一起吃，营养更均衡。"
-      ],
-      videoSearch: "南瓜泥 宝宝辅食 做法"
-    },
-    {
-      name: "牛油果香蕉泥",
-      icon: "🥑",
-      iconBg: "#E8F5E9",
-      category: "泥糊类",
-      age: "6月+",
-      time: "5分钟",
-      difficulty: "简单",
-      tags: ["免煮", "好脂肪", "润肠"],
-      ingredients: [
-        { name: "牛油果", amount: "半个" },
-        { name: "香蕉", amount: "半根" },
-        { name: "母乳/奶粉", amount: "少许" }
-      ],
-      steps: [
-        "牛油果对半切开，取出果肉。",
-        "香蕉剥皮，掰成小段。",
-        "用勺子将牛油果和香蕉一起压成泥。",
-        "加少许母乳或冲好的奶粉调稀，搅拌均匀即可。"
-      ],
-      tips: [
-        "💡 牛油果要选摸起来微软的，太硬没熟，太软过熟会发苦。",
-        "💡 这道免煮辅食非常适合外出携带。",
-        "💡 牛油果切开后容易氧化变黑，要现做现吃。"
-      ],
-      videoSearch: "牛油果香蕉泥 宝宝辅食 做法"
-    },
-    {
-      name: "牛肉末土豆泥",
-      icon: "🥔",
-      iconBg: "#FFF0DC",
-      category: "泥糊类",
-      age: "9月+",
-      time: "30分钟",
-      difficulty: "简单",
-      tags: ["补铁", "高蛋白", "好消化"],
-      ingredients: [
-        { name: "牛里脊肉", amount: "50克" },
-        { name: "土豆", amount: "1个(中)" },
-        { name: "胡萝卜", amount: "半根" },
-        { name: "蛋黄", amount: "1个" },
-        { name: "姜片", amount: "2片" },
-        { name: "温水", amount: "适量" }
-      ],
-      steps: [
-        "牛里脊肉剔除筋膜，切成薄片，冷水浸泡15分钟去血水。",
-        "牛肉片冷水下锅，加姜片，煮熟后捞出切成小碎末（越碎越好）。",
-        "土豆和胡萝卜去皮切小丁，上锅蒸20分钟至完全软透。",
-        "蒸好的土豆和胡萝卜用勺子压成细腻的泥状。",
-        "将牛肉末加入土豆泥中，混合均匀。",
-        "打入一个蛋黄搅拌均匀（蛋黄能让口感更顺滑）。",
-        "加入少量温水调整到合适的稀稠度，搅拌至顺滑。",
-        "放入蒸锅再蒸10分钟，让蛋黄完全熟透即可。"
-      ],
-      tips: [
-        "💡 牛肉一定要选里脊部位，最嫩最适合宝宝，记得去筋膜。",
-        "💡 切薄片再泡水，血水泡出来更彻底，煮的时候浮沫少。",
-        "💡 土豆蒸到筷子能轻松穿透的程度才算熟透。",
-        "💡 可以一次多做一些，分装到辅食盒里冷冻保存，吃的时候蒸热即可。",
-        "💡 8-9月龄宝宝打成细腻泥状，10月龄+可以保留一些小颗粒锻炼咀嚼。"
-      ],
-      videoSearch: "牛肉土豆泥 宝宝辅食 做法"
-    },
-    // ───────── 蒸类 ─────────
-    {
-      name: "鲜虾蒸蛋",
-      icon: "🍤",
-      iconBg: "#FFE0E0",
-      category: "蒸类",
-      age: "10月+",
-      time: "20分钟",
-      difficulty: "简单",
-      tags: ["高蛋白", "补钙", "嫩滑"],
-      ingredients: [
-        { name: "鸡蛋", amount: "2个" },
-        { name: "鲜虾", amount: "5只" },
-        { name: "温水", amount: "蛋液1.5倍" },
-        { name: "生抽", amount: "几滴" },
-        { name: "香油", amount: "几滴" }
-      ],
-      steps: [
-        "鲜虾去壳去虾线，切成小丁（留2只整虾装饰）。",
-        "鸡蛋打散，加入1.5倍温水搅匀，过筛去掉气泡。",
-        "蛋液倒入碗中，盖上保鲜膜，用牙签扎几个小孔。",
-        "冷水上锅，大火烧开转中小火蒸8分钟。",
-        "揭开保鲜膜，放入虾丁和整虾，再蒸5分钟。",
-        "出锅后淋几滴生抽和香油即可。"
-      ],
-      tips: [
-        "💡 蛋液一定要过筛，蒸出来才能像果冻一样嫩滑。",
-        "💡 水温用温水（约40°C），不要用冷水或开水。",
-        "💡 蒸的时候盖保鲜膜防止水蒸气滴入，表面才平整。",
-        "💡 确认宝宝对虾不过敏后再尝试这道辅食。"
-      ],
-      videoSearch: "鲜虾蒸蛋 宝宝辅食 做法"
-    },
-    {
-      name: "鳕鱼蔬菜蒸糕",
-      icon: "🐟",
-      iconBg: "#E0F7F5",
-      category: "蒸类",
-      age: "10月+",
-      time: "30分钟",
-      difficulty: "中等",
-      tags: ["DHA", "高蛋白", "手指食物"],
-      ingredients: [
-        { name: "鳕鱼", amount: "60克" },
-        { name: "鸡蛋", amount: "1个" },
-        { name: "西兰花", amount: "2小朵" },
-        { name: "胡萝卜", amount: "一小段" },
-        { name: "柠檬片", amount: "2片" },
-        { name: "面粉", amount: "1勺" }
-      ],
-      steps: [
-        "鳕鱼用柠檬片腌制10分钟去腥，上锅蒸8分钟，压碎去刺。",
-        "西兰花焯水切碎末，胡萝卜切碎末。",
-        "鸡蛋打散，加入鳕鱼碎、蔬菜碎和面粉搅拌均匀。",
-        "模具内壁刷薄油，倒入蛋糊。",
-        "冷水上锅，大火烧开转中火蒸20分钟。",
-        "蒸好后取出脱模，切成条状方便宝宝抓握。"
-      ],
-      tips: [
-        "💡 用柠檬腌鳕鱼去腥效果最好，比姜片更适合宝宝。",
-        "💡 一定要仔细检查鱼刺，虽然鳕鱼刺少但也要确认。",
-        "💡 切成长条状，10月龄+宝宝可以当手指食物自己抓着吃。",
-        "💡 蔬菜可以换成菠菜、南瓜等，自由搭配。"
-      ],
-      videoSearch: "鳕鱼蒸糕 宝宝辅食 做法"
-    },
-    // ───────── 粥类 ─────────
-    {
-      name: "小米南瓜粥",
-      icon: "🥣",
-      iconBg: "#FFF8DC",
-      category: "粥类",
-      age: "7月+",
-      time: "40分钟",
-      difficulty: "简单",
-      tags: ["养胃", "好消化", "维生素A"],
-      ingredients: [
-        { name: "小米", amount: "30克" },
-        { name: "南瓜", amount: "50克" },
-        { name: "清水", amount: "适量" }
-      ],
-      steps: [
-        "小米淘洗干净，提前浸泡20分钟。",
-        "南瓜去皮去籽，切成小块。",
-        "锅中加水烧开，下入小米大火煮开后转小火。",
-        "煮15分钟后加入南瓜块，继续小火煮20分钟。",
-        "南瓜煮软后用勺子压碎，搅拌均匀至浓稠即可。"
-      ],
-      tips: [
-        "💡 小米提前浸泡可以缩短煮的时间，也更容易出油。",
-        "💡 煮粥过程中要经常搅拌，防止糊底。",
-        "💡 小月龄宝宝可以只喝米油（粥表面那层），大月龄可以连粥一起吃。"
-      ],
-      videoSearch: "小米南瓜粥 宝宝辅食 做法"
-    },
-    {
-      name: "山药排骨粥",
-      icon: "🍚",
-      iconBg: "#F3E5F5",
-      category: "粥类",
-      age: "12月+",
-      time: "50分钟",
-      difficulty: "中等",
-      tags: ["健脾", "补钙", "高蛋白"],
-      ingredients: [
-        { name: "大米", amount: "50克" },
-        { name: "排骨", amount: "100克" },
-        { name: "山药", amount: "半根" },
-        { name: "姜片", amount: "2片" },
-        { name: "料酒", amount: "少许" }
-      ],
-      steps: [
-        "排骨剁小段，冷水下锅加姜片和料酒焯水，捞出洗净。",
-        "大米淘洗干净，山药去皮切小丁（戴手套防过敏）。",
-        "排骨放入锅中加足量水，大火煮开转小火炖20分钟。",
-        "加入大米和山药丁，继续小火煮25分钟至粥浓稠。",
-        "排骨肉剔下切碎，放回粥中搅匀即可。"
-      ],
-      tips: [
-        "💡 山药去皮时戴手套，否则容易手痒过敏。",
-        "💡 选铁棍山药口感更粉糯，普通山药偏脆不适合煮粥。",
-        "💡 排骨肉一定要剔下来切碎，防止骨头碎片伤到宝宝。"
-      ],
-      videoSearch: "山药排骨粥 宝宝辅食 做法"
-    },
-    // ───────── 面条类 ─────────
-    {
-      name: "番茄鸡蛋面",
-      icon: "🍝",
-      iconBg: "#FFE0E0",
-      category: "面条类",
-      age: "9月+",
-      time: "20分钟",
-      difficulty: "简单",
-      tags: ["维生素C", "开胃", "经典"],
-      ingredients: [
-        { name: "宝宝面条", amount: "一小把" },
-        { name: "番茄", amount: "1个" },
-        { name: "鸡蛋", amount: "1个" },
-        { name: "菠菜", amount: "2棵" },
-        { name: "食用油", amount: "少许" }
-      ],
-      steps: [
-        "番茄底部划十字，开水烫30秒去皮，切小丁。",
-        "菠菜焯水去草酸，切碎备用。",
-        "锅中放少许油，炒番茄丁至出汁成酱。",
-        "加适量水煮开，下入宝宝面条煮软（约5分钟）。",
-        "打入鸡蛋搅散成蛋花，加入菠菜碎煮1分钟即可。"
-      ],
-      tips: [
-        "💡 番茄一定要炒出红油酱汁，这样味道才鲜美。",
-        "💡 菠菜必须先焯水去草酸，否则影响钙吸收。",
-        "💡 宝宝面条选无盐的，煮得比大人面条软一些。",
-        "💡 小月龄宝宝可以把面条剪成短段再喂。"
-      ],
-      videoSearch: "番茄鸡蛋面 宝宝辅食 做法"
-    },
-    {
-      name: "虾仁蝴蝶面",
-      icon: "🦋",
-      iconBg: "#E3F2FD",
-      category: "面条类",
-      age: "12月+",
-      time: "25分钟",
-      difficulty: "中等",
-      tags: ["高蛋白", "补钙", "趣味形状"],
-      ingredients: [
-        { name: "宝宝蝴蝶面", amount: "50克" },
-        { name: "鲜虾", amount: "6只" },
-        { name: "西兰花", amount: "3小朵" },
-        { name: "胡萝卜", amount: "半根" },
-        { name: "番茄", amount: "半个" },
-        { name: "食用油", amount: "少许" }
-      ],
-      steps: [
-        "鲜虾去壳去虾线，切成小丁。",
-        "西兰花焯水切小碎，胡萝卜切小丁，番茄去皮切碎。",
-        "锅中放少许油，翻炒番茄出汁。",
-        "加入胡萝卜丁和适量水煮开。",
-        "下入蝴蝶面煮至快熟，加入虾仁和西兰花。",
-        "继续煮3分钟至虾仁变色、面条软糯即可。"
-      ],
-      tips: [
-        "💡 蝴蝶面形状可爱，宝宝更愿意自己用叉子扎着吃。",
-        "💡 虾仁要最后放，煮太久会变老变硬。",
-        "💡 过敏体质宝宝先确认对虾不过敏再食用。"
-      ],
-      videoSearch: "虾仁蝴蝶面 宝宝辅食 做法"
-    },
-    // ───────── 主食类 ─────────
-    {
-      name: "菠萝肉沫炒饭",
-      icon: "🍍",
-      iconBg: "#FFF3DC",
-      category: "主食类",
-      age: "18月+",
-      time: "20分钟",
-      difficulty: "简单",
-      tags: ["开胃", "维生素C", "酸甜可口"],
-      ingredients: [
-        { name: "隔夜米饭", amount: "1碗" },
-        { name: "菠萝", amount: "1/4个" },
-        { name: "猪肉沫", amount: "50克" },
-        { name: "鸡蛋", amount: "1个" },
-        { name: "胡萝卜", amount: "半根" },
-        { name: "青豆", amount: "一小把" },
-        { name: "生抽", amount: "少许" },
-        { name: "食用油", amount: "适量" }
-      ],
-      steps: [
-        "菠萝切小丁，用淡盐水浸泡10分钟去涩味，沥干备用。",
-        "胡萝卜切成小丁，青豆提前焯水备用。",
-        "鸡蛋打散，锅中放少许油，倒入蛋液炒成碎蛋花盛出。",
-        "锅中再加少许油，放入肉沫翻炒至变色发白，炒散。",
-        "加入胡萝卜丁和青豆一起翻炒2分钟至胡萝卜变软。",
-        "倒入米饭，用锅铲压散，中火不断翻炒让米饭粒粒分明。",
-        "加入菠萝丁和蛋花，翻炒均匀，淋少许生抽调味。",
-        "翻炒1分钟让菠萝香味融入米饭，出锅即可。"
-      ],
-      tips: [
-        "💡 一定用隔夜饭，水分少才能炒得粒粒分明不粘连。",
-        "💡 菠萝用盐水泡过后口感更甜，宝宝更容易接受。",
-        "💡 肉沫建议选前腿肉，有肥有瘦，炒出来香而不柴。",
-        "💡 宝宝月龄小的话，食材都切得更碎一些，米饭也可以稍微压软。"
-      ],
-      videoSearch: "菠萝肉沫炒饭 做法"
-    },
-    {
-      name: "蔬菜鸡肉软饼",
-      icon: "🥞",
-      iconBg: "#E8F5E9",
-      category: "主食类",
-      age: "12月+",
-      time: "20分钟",
-      difficulty: "简单",
-      tags: ["手指食物", "高蛋白", "蔬菜"],
-      ingredients: [
-        { name: "鸡胸肉", amount: "50克" },
-        { name: "胡萝卜", amount: "半根" },
-        { name: "西葫芦", amount: "一小段" },
-        { name: "鸡蛋", amount: "1个" },
-        { name: "面粉", amount: "2勺" },
-        { name: "食用油", amount: "少许" }
-      ],
-      steps: [
-        "鸡胸肉煮熟后用辅食机打成泥（或剁成极细的末）。",
-        "胡萝卜和西葫芦擦成细丝。",
-        "鸡蛋打散，加入鸡肉泥、蔬菜丝和面粉搅拌成糊。",
-        "平底锅刷薄油，小火加热。",
-        "舀一勺面糊倒入锅中，摊成小圆饼。",
-        "小火煎至两面金黄即可，约每面2分钟。"
-      ],
-      tips: [
-        "💡 面糊不要太稠也不要太稀，能缓慢流动的状态最好。",
-        "💡 一定要小火慢煎，大火容易外焦里生。",
-        "💡 做成小圆饼方便宝宝自己抓着吃，锻炼精细动作。",
-        "💡 可以一次多做几个，冷冻保存，吃的时候蒸热或微波。"
-      ],
-      videoSearch: "蔬菜鸡肉饼 宝宝辅食 做法"
-    },
-    // ───────── 汤煲类 ─────────
-    {
-      name: "莲藕腐竹炖排骨",
-      icon: "🍖",
-      iconBg: "#FFE0E0",
-      category: "汤煲类",
-      age: "18月+",
-      time: "60分钟",
-      difficulty: "中等",
-      tags: ["补钙", "高蛋白", "秋冬滋补"],
-      ingredients: [
-        { name: "排骨", amount: "300克" },
-        { name: "莲藕", amount: "1节" },
-        { name: "腐竹", amount: "50克" },
-        { name: "姜片", amount: "3片" },
-        { name: "料酒", amount: "适量" },
-        { name: "盐", amount: "少许" },
-        { name: "葱段", amount: "适量" },
-        { name: "枸杞", amount: "少许" }
-      ],
-      steps: [
-        "腐竹提前用温水泡发30分钟至软，剪成小段备用。",
-        "排骨剁成小段，冷水下锅，加入姜片和料酒，大火烧开焯去血沫，捞出用温水冲洗干净。",
-        "莲藕去皮切成滚刀块（选粉藕口感更软糯，适合宝宝吃）。",
-        "砂锅中加入足量热水，放入焯好的排骨和姜片，大火烧开后转小火慢炖30分钟。",
-        "加入莲藕块继续炖20分钟，直到莲藕变得软糯。",
-        "最后放入泡好的腐竹段和枸杞，再炖10分钟。",
-        "出锅前加少许盐调味，撒上葱段即可。宝宝吃的部分少放盐。"
-      ],
-      tips: [
-        "💡 莲藕选粉藕（短胖、表皮发褐），炖出来更软糯，脆藕不适合宝宝。",
-        "💡 腐竹不要泡太久，半软即可放入，否则容易煮烂。",
-        "💡 排骨焯水一定要冷水下锅，这样血沫去得更干净。",
-        "💡 给小月龄宝宝吃时，可以把排骨肉剔下来切碎，莲藕和腐竹也切小。"
-      ],
-      videoSearch: "莲藕腐竹炖排骨 做法"
-    },
-    {
-      name: "番茄豆腐肉丸汤",
-      icon: "🍅",
-      iconBg: "#FFE0E0",
-      category: "汤煲类",
-      age: "12月+",
-      time: "30分钟",
-      difficulty: "中等",
-      tags: ["补铁", "维生素C", "暖胃"],
-      ingredients: [
-        { name: "猪肉沫", amount: "80克" },
-        { name: "嫩豆腐", amount: "半块" },
-        { name: "番茄", amount: "1个" },
-        { name: "鸡蛋", amount: "1个" },
-        { name: "淀粉", amount: "1小勺" },
-        { name: "菠菜", amount: "2棵" }
-      ],
-      steps: [
-        "猪肉沫加入蛋清和淀粉，朝一个方向搅拌上劲。",
-        "用手挤出小肉丸（虎口挤丸法），放入盘中备用。",
-        "番茄去皮切小块，锅中少许油炒出汁。",
-        "加适量水煮开，放入肉丸煮至浮起（约5分钟）。",
-        "豆腐切小块放入，菠菜焯水后切碎放入。",
-        "煮2分钟，肉丸熟透即可出锅。"
-      ],
-      tips: [
-        "💡 肉馅一定要朝一个方向搅拌上劲，丸子才不会散。",
-        "💡 丸子做小一点，方便宝宝一口一个。",
-        "💡 菠菜一定先焯水去草酸。",
-        "💡 豆腐选嫩豆腐，口感滑嫩宝宝更爱吃。"
-      ],
-      videoSearch: "番茄豆腐肉丸汤 宝宝辅食 做法"
-    },
-    // ───────── 小食类 ─────────
-    {
-      name: "香蕉松饼",
-      icon: "🥞",
-      iconBg: "#FFF3DC",
-      category: "小食类",
-      age: "10月+",
-      time: "15分钟",
-      difficulty: "简单",
-      tags: ["手指食物", "加餐", "免油炸"],
-      ingredients: [
-        { name: "香蕉", amount: "1根" },
-        { name: "鸡蛋", amount: "1个" },
-        { name: "低筋面粉", amount: "30克" },
-        { name: "食用油", amount: "少许" }
-      ],
-      steps: [
-        "香蕉用叉子压成泥。",
-        "打入鸡蛋搅拌均匀。",
-        "筛入低筋面粉，搅拌至无颗粒的面糊。",
-        "平底锅刷薄薄一层油，小火加热。",
-        "舀一小勺面糊入锅，自然摊成小圆饼。",
-        "小火煎至底面金黄（约2分钟），翻面再煎2分钟即可。"
-      ],
-      tips: [
-        "💡 香蕉越熟越甜，不需要额外加糖。",
-        "💡 面糊不要搅拌过度，否则松饼口感会偏硬。",
-        "💡 一定小火！大火很容易煎糊。",
-        "💡 可以做成银币大小，方便宝宝自己抓着吃。"
-      ],
-      videoSearch: "香蕉松饼 宝宝辅食 做法"
-    },
-    {
-      name: "紫薯奶香球",
-      icon: "🟣",
-      iconBg: "#F3E5F5",
-      category: "小食类",
-      age: "10月+",
-      time: "25分钟",
-      difficulty: "简单",
-      tags: ["手指食物", "膳食纤维", "无糖"],
-      ingredients: [
-        { name: "紫薯", amount: "1个" },
-        { name: "奶粉", amount: "1勺" },
-        { name: "糯米粉", amount: "15克" }
-      ],
-      steps: [
-        "紫薯去皮切片，上锅蒸20分钟至软。",
-        "趁热压成泥，加入奶粉和糯米粉搅拌均匀。",
-        "揉成光滑面团，分成小剂子搓成小球。",
-        "水开后放入紫薯球，煮至浮起再煮2分钟即可。"
-      ],
-      tips: [
-        "💡 紫薯本身有甜味，不需要额外加糖。",
-        "💡 糯米粉不要加太多，否则口感太黏不好消化。",
-        "💡 做成拇指大小的球，方便宝宝自己捏着吃。",
-        "💡 糯米制品不要给太小的宝宝吃太多，不好消化。"
-      ],
-      videoSearch: "紫薯球 宝宝辅食 做法"
-    }
-  ];
-
-  // ==================== 分类标签 ====================
-  const categories = ["全部", "泥糊类", "蒸类", "粥类", "面条类", "主食类", "汤煲类", "小食类"];
   let activeCategory = "全部";
+  let activeMeal = "不限";
 
   function renderTags() {
-    const tagBar = document.getElementById("tagBar");
-    tagBar.innerHTML = categories.map(cat => 
+    document.getElementById("tagBar").innerHTML = categories.map(cat => 
       `<div class="tag ${cat === activeCategory ? 'active' : ''}" onclick="selectCategory('${cat}')">${cat}</div>`
+    ).join("");
+    document.getElementById("mealBar").innerHTML = mealFilters.map(m => 
+      `<div class="tag ${m === activeMeal ? 'active' : ''}" onclick="selectMeal('${m}')" style="font-size:12px;padding:6px 12px;">${m}</div>`
     ).join("");
   }
 
-  function selectCategory(cat) {
-    activeCategory = cat;
-    renderTags();
-    filterRecipes();
-  }
+  function selectCategory(cat) { activeCategory = cat; renderTags(); filterRecipes(); }
+  function selectMeal(m) { activeMeal = m; renderTags(); filterRecipes(); }
 
-  // ==================== 渲染菜谱列表 ====================
   function filterRecipes() {
     const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
     const filtered = recipes.filter(r => {
-      const matchCategory = activeCategory === "全部" || r.category === activeCategory;
-      const matchKeyword = !keyword || 
+      const matchCat = activeCategory === "全部" || r.category === activeCategory;
+      const matchMeal = activeMeal === "不限" || r.meal === activeMeal;
+      const matchKw = !keyword || 
         r.name.toLowerCase().includes(keyword) ||
         r.tags.some(t => t.toLowerCase().includes(keyword)) ||
         r.ingredients.some(i => i.name.toLowerCase().includes(keyword)) ||
         r.category.toLowerCase().includes(keyword);
-      return matchCategory && matchKeyword;
+      return matchCat && matchMeal && matchKw;
     });
+    document.getElementById("recipeCount").textContent = `共 ${filtered.length} 道菜谱`;
     renderRecipeList(filtered);
   }
 
   function renderRecipeList(list) {
-    const container = document.getElementById("recipeList");
-    if (list.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="emoji">🔍</div>
-          <p>没有找到匹配的菜谱</p>
-        </div>`;
-      return;
-    }
-    container.innerHTML = list.map((r, idx) => `
+    const c = document.getElementById("recipeList");
+    if (!list.length) { c.innerHTML = `<div class="empty-state"><div class="emoji">🔍</div><p>没有找到匹配的菜谱</p></div>`; return; }
+    c.innerHTML = list.map(r => `
       <div class="recipe-card" onclick="openRecipe(${recipes.indexOf(r)})">
         <div class="recipe-card-header">
           <div class="recipe-icon" style="background:${r.iconBg}">${r.icon}</div>
           <div class="recipe-info">
             <h3>${r.name}</h3>
             <div class="recipe-meta">
-              <span>👶 ${r.age}</span>
-              <span>⏱ ${r.time}</span>
-              <span>📊 ${r.difficulty}</span>
+              <span>${r.meal}</span>
+              <span>📂 ${r.category}</span>
             </div>
           </div>
         </div>
         <div class="recipe-tags">
+          <span class="recipe-tag" style="background:${r.iconBg};color:#333;">食材：${r.ingredients.slice(0,3).map(i=>i.name).join('、')}</span>
           ${r.tags.map(t => `<span class="recipe-tag">${t}</span>`).join("")}
         </div>
       </div>
     `).join("");
   }
 
-  // ==================== 菜谱详情弹窗 ====================
   function openRecipe(idx) {
     const r = recipes[idx];
-    const modal = document.getElementById("modalContent");
-    modal.innerHTML = `
+    document.getElementById("modalContent").innerHTML = `
       <div class="modal-header">
         <div class="recipe-icon" style="background:${r.iconBg}">${r.icon}</div>
         <div>
           <h2>${r.name}</h2>
           <div class="recipe-meta">
-            <span>👶 ${r.age}</span>
-            <span>⏱ ${r.time}</span>
-            <span>📊 ${r.difficulty}</span>
+            <span>${r.meal}</span>
+            <span>📂 ${r.category}</span>
           </div>
         </div>
       </div>
-      
       <div class="modal-section">
         <h4>🥬 食材准备</h4>
         <div class="ingredients-grid">
-          ${r.ingredients.map(i => `
-            <div class="ingredient-item">
-              <span>${i.name}</span>
-              <span class="amount">${i.amount}</span>
-            </div>
-          `).join("")}
+          ${r.ingredients.map(i => `<div class="ingredient-item"><span>${i.name}</span><span class="amount">${i.amount}</span></div>`).join("")}
         </div>
       </div>
-
       <div class="modal-section">
         <h4>👩‍🍳 制作步骤</h4>
         <div class="steps-list">
-          ${r.steps.map((s, i) => `
-            <div class="step-item">
-              <div class="step-num">${i + 1}</div>
-              <div class="step-text">${s}</div>
-            </div>
-          `).join("")}
+          ${r.steps.map((s, i) => `<div class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`).join("")}
         </div>
       </div>
-
       <div class="modal-section">
         <h4>📝 小贴士</h4>
-        <div class="tips-box">
-          ${r.tips.map(t => `<p>${t}</p>`).join("")}
-        </div>
+        <div class="tips-box">${r.tips.map(t => `<p>${t}</p>`).join("")}</div>
       </div>
-
       <div class="modal-section">
-        <button class="video-btn" onclick="searchVideo('${r.videoSearch}')">
-          📺 在B站搜索教学视频
-        </button>
+        <button class="video-btn" onclick="searchVideo('${r.videoSearch}')">📺 在B站搜索教学视频</button>
       </div>
     `;
     document.getElementById("modalOverlay").classList.add("show");
@@ -1023,39 +513,27 @@
     document.body.style.overflow = "";
   }
 
-  function searchVideo(keyword) {
-    const url = `https://search.bilibili.com/all?keyword=${encodeURIComponent(keyword)}`;
-    window.open(url, "_blank");
-  }
-
-  // ==================== 随机推荐 ====================
-  function showRandomRecipe() {
-    const idx = Math.floor(Math.random() * recipes.length);
-    openRecipe(idx);
-  }
-
-  // ==================== 关于 ====================
+  function searchVideo(kw) { window.open(`https://search.bilibili.com/all?keyword=${encodeURIComponent(kw)}`, "_blank"); }
+  function showRandomRecipe() { openRecipe(Math.floor(Math.random() * recipes.length)); }
   function showAbout() {
-    const modal = document.getElementById("modalContent");
-    modal.innerHTML = `
-      <div style="padding: 20px; text-align: center;">
-        <div style="font-size: 64px; margin: 20px 0;">🍼</div>
-        <h2 style="margin-bottom: 8px;">宝宝辅食菜谱</h2>
-        <p style="color: var(--text-light); margin-bottom: 20px;">为宝宝的每一餐用心准备</p>
-        <div class="tips-box" style="text-align: left;">
-          <p>🌟 精选适合宝宝的营养菜谱</p>
-          <p>🌟 每道菜标注适合月龄</p>
+    document.getElementById("modalContent").innerHTML = `
+      <div style="padding:20px;text-align:center;">
+        <div style="font-size:64px;margin:20px 0;">🍼</div>
+        <h2 style="margin-bottom:8px;">宝宝辅食菜谱</h2>
+        <p style="color:var(--text-light);margin-bottom:20px;">为宝宝的每一餐用心准备</p>
+        <div class="tips-box" style="text-align:left;">
+          <p>🌟 精选 ${recipes.length} 道宝宝营养菜谱</p>
+          <p>🌟 主食 · 菜品 · 汤羹 三大分类</p>
+          <p>🌟 早餐 · 午晚餐 · 全天 餐次筛选</p>
           <p>🌟 详细步骤 + 贴心小贴士</p>
           <p>🌟 一键搜索B站教学视频</p>
-          <p style="margin-top: 8px; font-size: 12px; color: #aaa;">Made with ❤️ for Baby</p>
+          <p style="margin-top:8px;font-size:12px;color:#aaa;">Made with ❤️ for Baby</p>
         </div>
-      </div>
-    `;
+      </div>`;
     document.getElementById("modalOverlay").classList.add("show");
     document.body.style.overflow = "hidden";
   }
 
-  // ==================== 初始化 ====================
   renderTags();
   filterRecipes();
 </script>
