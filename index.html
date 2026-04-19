@@ -164,6 +164,14 @@
       background: #f5f5f5;
       color: var(--text-light);
     }
+    .nutrient-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 8px;
+      background: #E8F5E9;
+      color: #2E7D32;
+      font-weight: 500;
+    }
 
     /* 菜谱详情弹窗 */
     .modal-overlay {
@@ -387,6 +395,7 @@
 
 <div class="tags" id="tagBar"></div>
 <div class="tags" id="mealBar" style="padding-top:4px;"></div>
+<div class="tags" id="nutrientBar" style="padding-top:2px;"></div>
 
 <div class="recipe-count" id="recipeCount" style="padding:4px 20px 0;font-size:12px;color:var(--text-light);"></div>
 <div class="recipe-list" id="recipeList"></div>
@@ -418,30 +427,40 @@
 <script>
   let activeCategory = "全部";
   let activeMeal = "不限";
+  let activeNutrient = "不限";
 
   function renderTags() {
-    document.getElementById("tagBar").innerHTML = categories.map(cat => 
+    // 分类标签
+    document.getElementById("tagBar").innerHTML = categories.map(cat =>
       `<div class="tag ${cat === activeCategory ? 'active' : ''}" onclick="selectCategory('${cat}')">${cat}</div>`
     ).join("");
-    document.getElementById("mealBar").innerHTML = mealFilters.map(m => 
+    // 餐次标签
+    document.getElementById("mealBar").innerHTML = mealFilters.map(m =>
       `<div class="tag ${m === activeMeal ? 'active' : ''}" onclick="selectMeal('${m}')" style="font-size:12px;padding:6px 12px;">${m}</div>`
+    ).join("");
+    // 营养素标签
+    document.getElementById("nutrientBar").innerHTML = nutrientFilters.map(n =>
+      `<div class="tag ${n === activeNutrient ? 'active' : ''}" onclick="selectNutrient('${n}')" style="font-size:11px;padding:5px 10px;">${n}</div>`
     ).join("");
   }
 
   function selectCategory(cat) { activeCategory = cat; renderTags(); filterRecipes(); }
   function selectMeal(m) { activeMeal = m; renderTags(); filterRecipes(); }
+  function selectNutrient(n) { activeNutrient = n; renderTags(); filterRecipes(); }
 
   function filterRecipes() {
     const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
     const filtered = recipes.filter(r => {
       const matchCat = activeCategory === "全部" || r.category === activeCategory;
       const matchMeal = activeMeal === "不限" || r.meal === activeMeal;
-      const matchKw = !keyword || 
+      const matchNutrient = activeNutrient === "不限" || (r.nutrients && r.nutrients.includes(activeNutrient));
+      const matchKw = !keyword ||
         r.name.toLowerCase().includes(keyword) ||
         r.tags.some(t => t.toLowerCase().includes(keyword)) ||
+        (r.nutrients && r.nutrients.some(n => n.toLowerCase().includes(keyword))) ||
         r.ingredients.some(i => i.name.toLowerCase().includes(keyword)) ||
         r.category.toLowerCase().includes(keyword);
-      return matchCat && matchMeal && matchKw;
+      return matchCat && matchMeal && matchNutrient && matchKw;
     });
     document.getElementById("recipeCount").textContent = `共 ${filtered.length} 道菜谱`;
     renderRecipeList(filtered);
@@ -464,7 +483,8 @@
         </div>
         <div class="recipe-tags">
           <span class="recipe-tag" style="background:${r.iconBg};color:#333;">食材：${r.ingredients.slice(0,3).map(i=>i.name).join('、')}</span>
-          ${r.tags.map(t => `<span class="recipe-tag">${t}</span>`).join("")}
+          ${(r.nutrients || []).slice(0, 3).map(n => `<span class="recipe-tag" style="background:#E8F5E9;color:#2E7D32;font-size:10px;">${n}</span>`).join("")}
+          ${r.tags.slice(0, 2).map(t => `<span class="recipe-tag">${t}</span>`).join("")}
         </div>
       </div>
     `).join("");
@@ -472,6 +492,7 @@
 
   function openRecipe(idx) {
     const r = recipes[idx];
+    const nutrientTags = (r.nutrients || []).map(n => `<span class="nutrient-tag">${n}</span>`).join(" ");
     document.getElementById("modalContent").innerHTML = `
       <div class="modal-header">
         <div class="recipe-icon" style="background:${r.iconBg}">${r.icon}</div>
@@ -481,6 +502,7 @@
             <span>${r.meal}</span>
             <span>📂 ${r.category}</span>
           </div>
+          <div style="margin-top:6px;">${nutrientTags}</div>
         </div>
       </div>
       <div class="modal-section">
@@ -519,12 +541,13 @@
     document.getElementById("modalContent").innerHTML = `
       <div style="padding:20px;text-align:center;">
         <div style="font-size:64px;margin:20px 0;">🍼</div>
-        <h2 style="margin-bottom:8px;">宝宝辅食菜谱</h2>
+        <h2 style="margin-bottom:8px;">宝宝辅食菜谱 v1.1</h2>
         <p style="color:var(--text-light);margin-bottom:20px;">为宝宝的每一餐用心准备</p>
         <div class="tips-box" style="text-align:left;">
           <p>🌟 精选 ${recipes.length} 道宝宝营养菜谱</p>
           <p>🌟 主食 · 菜品 · 汤羹 三大分类</p>
           <p>🌟 早餐 · 午晚餐 · 全天 餐次筛选</p>
+          <p>🌟 补钙·补铁·补锌·补DHA 营养素筛选</p>
           <p>🌟 详细步骤 + 贴心小贴士</p>
           <p>🌟 一键搜索B站教学视频</p>
           <p style="margin-top:8px;font-size:12px;color:#aaa;">Made with ❤️ for Baby</p>
