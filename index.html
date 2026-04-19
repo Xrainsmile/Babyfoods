@@ -390,7 +390,7 @@
 </div>
 
 <div class="search-bar">
-  <input type="text" id="searchInput" placeholder="搜索菜谱、食材..." oninput="filterRecipes()" />
+  <input type="text" id="searchInput" placeholder="搜索菜谱、食材..." oninput="debounceFilter()" />
 </div>
 
 <div class="tags" id="tagBar"></div>
@@ -428,6 +428,13 @@
   let activeCategory = "全部";
   let activeMeal = "不限";
   let activeNutrient = "不限";
+  let searchTimer = null;
+
+  // 搜索防抖
+  function debounceFilter() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(filterRecipes, 300);
+  }
 
   function renderTags() {
     // 分类标签
@@ -483,7 +490,7 @@
         </div>
         <div class="recipe-tags">
           <span class="recipe-tag" style="background:${r.iconBg};color:#333;">食材：${r.ingredients.slice(0,3).map(i=>i.name).join('、')}</span>
-          ${(r.nutrients || []).slice(0, 3).map(n => `<span class="recipe-tag" style="background:#E8F5E9;color:#2E7D32;font-size:10px;">${n}</span>`).join("")}
+          ${(r.nutrients || []).slice(0, 3).map(n => `<span class="nutrient-tag">${n}</span>`).join("")}
           ${r.tags.slice(0, 2).map(t => `<span class="recipe-tag">${t}</span>`).join("")}
         </div>
       </div>

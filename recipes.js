@@ -121,7 +121,7 @@ const recipes = [
     category: "主食",
     meal: "🌅 早餐",
     tags: ["健脾", "自然甜", "软嫩"],
-    nutrients: ["补铁", "补膳食纤维", "健脾养胃"],
+    nutrients: ["补铁", "补膳食纤维", "健脾"],
     ingredients: [
       { name: "山药", amount: "150克" },
       { name: "红枣", amount: "5颗" },
@@ -178,7 +178,7 @@ const recipes = [
     category: "主食",
     meal: "🍽️ 午晚餐",
     tags: ["开胃", "酸甜可口"],
-    nutrients: ["补维C", "开胃消食", "高蛋白"],
+    nutrients: ["补维C", "开胃", "高蛋白"],
     ingredients: [
       { name: "隔夜米饭", amount: "1碗" },
       { name: "菠萝", amount: "1/4个" },
@@ -329,7 +329,7 @@ const recipes = [
     category: "主食",
     meal: "🌅 早餐",
     tags: ["补脑", "手抓食物", "5分钟搞定"],
-    nutrients: ["补脑DHA", "补锌", "补膳食纤维", "补钙"],
+    nutrients: ["补DHA", "补锌", "补膳食纤维", "补钙"],
     ingredients: [
       { name: "即食燕麦", amount: "50克" },
       { name: "核桃", amount: "3个" },
@@ -356,7 +356,7 @@ const recipes = [
     category: "主食",
     meal: "🍽️ 午晚餐",
     tags: ["补脑DHA", "手指食物", "外酥里嫩"],
-    nutrients: ["补脑DHA", "高蛋白", "补钾"],
+    nutrients: ["补DHA", "高蛋白", "补钾"],
     ingredients: [
       { name: "鳕鱼", amount: "50克" },
       { name: "土豆", amount: "1个" },
@@ -385,7 +385,7 @@ const recipes = [
     category: "主食",
     meal: "🍽️ 午晚餐",
     tags: ["酸甜开胃", "软烂"],
-    nutrients: ["补维C", "高蛋白", "开胃消食"],
+    nutrients: ["补维C", "高蛋白", "开胃"],
     ingredients: [
       { name: "西红柿", amount: "1个" },
       { name: "虾仁", amount: "6只" },
@@ -413,7 +413,7 @@ const recipes = [
     category: "主食",
     meal: "🌅 早餐",
     tags: ["健脾", "养胃", "自然甜"],
-    nutrients: ["健脾养胃", "补膳食纤维", "易消化"],
+    nutrients: ["健脾", "补膳食纤维", "易消化"],
     ingredients: [
       { name: "山药", amount: "100克" },
       { name: "小米", amount: "30克" },
@@ -469,7 +469,7 @@ const recipes = [
     category: "主食",
     meal: "🍽️ 午晚餐",
     tags: ["补脑DHA", "补钙", "营养全面"],
-    nutrients: ["补脑DHA", "补钙", "高蛋白", "补维D"],
+    nutrients: ["补DHA", "补钙", "高蛋白", "补维D"],
     ingredients: [
       { name: "三文鱼", amount: "40克" },
       { name: "嫩豆腐", amount: "半块" },
@@ -498,7 +498,7 @@ const recipes = [
     category: "菜品",
     meal: "🌅 早餐",
     tags: ["香甜", "护眼", "顺滑"],
-    nutrients: ["护眼", "高蛋白", "补钙"],
+    nutrients: ["补维A", "高蛋白", "补钙"],
     ingredients: [
       { name: "甜玉米", amount: "半根" },
       { name: "鸡蛋", amount: "1个" },
@@ -525,7 +525,7 @@ const recipes = [
     category: "菜品",
     meal: "🍽️ 午晚餐",
     tags: ["补脑DHA", "极简", "无刺"],
-    nutrients: ["补脑DHA", "高蛋白", "补维D"],
+    nutrients: ["补DHA", "高蛋白", "补维D"],
     ingredients: [
       { name: "鳕鱼", amount: "1小块" },
       { name: "葱", amount: "少许" },
@@ -858,7 +858,7 @@ const recipes = [
     category: "汤羹",
     meal: "🍽️ 午晚餐",
     tags: ["开胃", "软烂", "补铁"],
-    nutrients: ["补铁", "补维C", "补钙", "开胃消食"],
+    nutrients: ["补铁", "补维C", "补钙", "开胃"],
     ingredients: [
       { name: "西红柿", amount: "1个" },
       { name: "猪瘦肉", amount: "30克" },
@@ -886,7 +886,7 @@ const recipes = [
     category: "汤羹",
     meal: "⭐ 早午晚都行",
     tags: ["健脾胃", "促消化", "清甜"],
-    nutrients: ["健脾养胃", "补维C", "促消化"],
+    nutrients: ["健脾", "补维C", "促消化"],
     ingredients: [
       { name: "山药", amount: "半根" },
       { name: "苹果", amount: "1个" }
@@ -912,7 +912,7 @@ const recipes = [
     category: "汤羹",
     meal: "🍽️ 午晚餐",
     tags: ["超级补铁", "好吞咽"],
-    nutrients: ["超级补铁", "补维A", "补叶酸"],
+    nutrients: ["补铁", "补维A", "补叶酸"],
     ingredients: [
       { name: "菠菜", amount: "3棵" },
       { name: "猪肝", amount: "30克" },
@@ -940,7 +940,7 @@ const recipes = [
     category: "汤羹",
     meal: "⭐ 早午晚都行",
     tags: ["开胃", "好消化", "暖胃"],
-    nutrients: ["补维C", "高蛋白", "开胃消食"],
+    nutrients: ["补维C", "高蛋白", "开胃"],
     ingredients: [
       { name: "西红柿", amount: "1个" },
       { name: "鸡蛋", amount: "1个" },
@@ -967,7 +967,7 @@ const recipes = [
     category: "汤羹",
     meal: "🍽️ 午晚餐",
     tags: ["补钙", "清淡", "好消化"],
-    nutrients: ["补钙", "补锌", "清淡利尿"],
+    nutrients: ["补钙", "补锌", "利尿"],
     ingredients: [
       { name: "丝瓜", amount: "半根" },
       { name: "鸡蛋", amount: "1个" },
@@ -1049,7 +1049,7 @@ const recipes = [
     category: "汤羹",
     meal: "⭐ 早午晚都行",
     tags: ["清淡", "好消化"],
-    nutrients: ["清淡利尿", "高蛋白", "补膳食纤维"],
+    nutrients: ["利尿", "高蛋白", "补膳食纤维"],
     ingredients: [
       { name: "冬瓜", amount: "100克" },
       { name: "猪瘦肉", amount: "30克" },
@@ -1266,7 +1266,7 @@ const recipes = [
     category: "菜品",
     meal: "🍽️ 午晚餐",
     tags: ["补脑DHA", "高蛋白", "手指食物"],
-    nutrients: ["补脑DHA", "高蛋白", "补维A"],
+    nutrients: ["补DHA", "高蛋白", "补维A"],
     ingredients: [
       { name: "鳕鱼", amount: "60克" },
       { name: "鸡蛋", amount: "1个" },
@@ -1295,7 +1295,7 @@ const recipes = [
     category: "主食",
     meal: "🍽️ 午晚餐",
     tags: ["开胃", "经典"],
-    nutrients: ["补维C", "高蛋白", "开胃消食"],
+    nutrients: ["补维C", "高蛋白", "开胃"],
     ingredients: [
       { name: "宝宝面条", amount: "一小把" },
       { name: "番茄", amount: "1个" },
@@ -1494,7 +1494,7 @@ const recipes = [
     category: "汤羹",
     meal: "🍽️ 午晚餐",
     tags: ["健脾", "补钙", "高蛋白"],
-    nutrients: ["健脾养胃", "补钙", "高蛋白"],
+    nutrients: ["健脾", "补钙", "高蛋白"],
     ingredients: [
       { name: "大米", amount: "50克" },
       { name: "排骨", amount: "100克" },
@@ -1521,4 +1521,4 @@ const recipes = [
 const categories = ["全部", "主食", "菜品", "汤羹"];
 const mealFilters = ["不限", "🌅 早餐", "🍽️ 午晚餐", "⭐ 早午晚都行"];
 // 营养素筛选标签
-const nutrientFilters = ["不限", "补钙", "补铁", "补锌", "补碘", "补维A", "补维C", "补DHA", "补膳食纤维", "高蛋白"];
+const nutrientFilters = ["不限", "补钙", "补铁", "补锌", "补碘", "补维A", "补维C", "补DHA", "补膳食纤维", "高蛋白", "利尿"];
