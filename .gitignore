@@ -1,0 +1,10 @@
+# 个人记忆与敏感信息（含服务器凭证、部署细节），不提交到 GitHub
+.codebuddy/
+
+# macOS
+.DS_Store
+._*
+
+# 临时文件
+*.tmp
+*.log
