@@ -50,9 +50,6 @@ button { font-family: inherit; cursor: pointer; }
   background: linear-gradient(135deg, #FF8A65, #FF6B4A);
   color: #fff;
   padding: 20px 20px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 50;
 }
 .app-header h1 {
   font-size: var(--fs-xl);
@@ -65,6 +62,15 @@ button { font-family: inherit; cursor: pointer; }
   margin-top: 2px;
 }
 
+/* ============ 顶部导航（整体 sticky，滚动时固定，内部不重叠） ============ */
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
 /* ============ 阶段 Tab ============ */
 .stage-tabs {
   display: flex;
@@ -72,16 +78,13 @@ button { font-family: inherit; cursor: pointer; }
   padding: 12px 16px 0;
   overflow-x: auto;
   background: var(--bg);
-  position: sticky;
-  top: 96px;
-  z-index: 40;
   scrollbar-width: none;
 }
 .stage-tabs::-webkit-scrollbar { display: none; }
 .stage-tab {
   flex: 1 0 auto;
-  min-width: 92px;
-  padding: 12px 8px 10px;
+  min-width: 0;
+  padding: 11px 16px;
   background: var(--card);
   border: 2px solid var(--border);
   border-radius: 14px;
@@ -91,13 +94,34 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--text-secondary);
   transition: all .15s;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.stage-tab .emoji { display: block; font-size: 22px; margin-bottom: 2px; }
 .stage-tab.active {
   background: var(--primary);
   border-color: var(--primary);
   color: #fff;
   box-shadow: var(--shadow);
+}
+/* 板块 tab：SVG 图标在文字左边 */
+.stage-tabs.section-tabs .stage-tab {
+  gap: 6px;
+}
+.stage-tab .icon {
+  width: 17px;
+  height: 17px;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.stage-tab .icon svg {
+  width: 100%;
+  height: 100%;
+}
+/* 板块 tab：顶部与月龄 tab/搜索框留间距，底部留白与内容分隔 */
+.stage-tabs.section-tabs {
+  padding-top: 10px;
+  padding-bottom: 12px;
 }
 
 /* ============ 通用容器 ============ */
@@ -175,11 +199,8 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ============ 搜索 ============ */
 .search-bar {
-  position: sticky;
-  top: 148px;
-  z-index: 39;
   background: var(--bg);
-  padding: 8px 16px 12px;
+  padding: 8px 16px 4px;
 }
 .search-bar input {
   width: 100%;
@@ -536,7 +557,15 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 2px;
 }
-.bottom-nav button .emoji { font-size: 22px; }
+.bottom-nav button .icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+}
+.bottom-nav button .icon svg {
+  width: 100%;
+  height: 100%;
+}
 .bottom-nav button.active { color: var(--primary); font-weight: 700; }
 
 /* 底部留白，避免内容被导航遮挡 */

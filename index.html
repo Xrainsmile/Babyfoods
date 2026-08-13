@@ -13,16 +13,19 @@
     <div class="subtitle">给宝妈宝爸、爷爷奶奶的贴心食谱 · 6个月～3岁</div>
   </header>
 
-  <!-- 年龄阶段 Tab -->
-  <nav class="stage-tabs" id="stageTabs"></nav>
+  <!-- 顶部导航（滚动时整体固定，内部元素按文档流排列不重叠） -->
+  <div class="sticky-nav">
+    <!-- 年龄阶段 Tab -->
+    <nav class="stage-tabs" id="stageTabs"></nav>
 
-  <!-- 搜索 -->
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="🔍 搜索菜谱、食材，比如「牛肉」「便秘」..." />
+    <!-- 搜索 -->
+    <div class="search-bar" id="searchBar">
+      <input type="text" id="searchInput" placeholder="🔍 搜索菜谱、食材，比如「牛肉」「便秘」..." />
+    </div>
+
+    <!-- 板块 Tab -->
+    <nav class="stage-tabs section-tabs" id="sectionTabs"></nav>
   </div>
-
-  <!-- 板块 Tab -->
-  <nav class="stage-tabs" id="sectionTabs"></nav>
 
   <!-- 主内容 -->
   <div class="container page" id="main"></div>
@@ -30,10 +33,10 @@
   <!-- 底部导航 -->
   <nav class="bottom-nav" id="bottomNav">
     <button data-nav="home" class="active">
-      <span class="emoji">🏠</span>首页
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>首页
     </button>
-    <button data-nav="safety">
-      <span class="emoji">🛡️</span>安全原则
+    <button data-nav="principles">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v4a2 2 0 0 0 1 1.73V21a1 1 0 0 0 2 0V8.73A2 2 0 0 0 14 7V3"/><line x1="9" y1="13" x2="15" y2="13"/></svg></span>宝宝食物原则
     </button>
   </nav>
 

@@ -1,15 +1,53 @@
 /**
  * 应用逻辑：路由 + 渲染
  * 纯 vanilla JS，无框架无依赖，支持 file:// 直接打开
+ *
+ * 顶层两个页面（整页切换）：
+ *   home       首页 —— 每周菜单 / 选菜谱 / 按食材选
+ *   principles 宝宝食物原则 —— 核心原则 / 红黑榜 / 安全原则
  */
 
 const App = (() => {
   /* ---------- 状态 ---------- */
-  let activeStageId = '6-8';
-  let activeTab = 'principles';   // principles | mealplan | recipes | ingredients | blacklist | safety
+  let currentPage = 'home';        // 顶层页面：home | principles
+  let activeStageId = '6-8';       // 月龄阶段
+  let activeTab = 'mealplan';      // 当前页面内的子 tab
   const selectedIngredients = new Set();
   let searchKeyword = '';
   let currentRecipeId = null;
+
+  /* ---------- 页面定义 ---------- */
+  const PAGES = {
+    home: {
+      label: '首页',
+      emoji: '🏠',
+      tabs: [
+        { id: 'mealplan', label: '每周菜单', emoji: '📅' },
+        { id: 'recipes', label: '选菜谱', emoji: '🍽️' },
+        { id: 'ingredients', label: '按食材选', emoji: '🥕' }
+      ]
+    },
+    principles: {
+      label: '宝宝食物原则',
+      emoji: '🍼',
+      tabs: [
+        { id: 'principles', label: '核心原则', emoji: '📖' },
+        { id: 'blacklist', label: '红黑榜', emoji: '🚦' },
+        { id: 'safety', label: '安全原则', emoji: '🛡️' }
+      ]
+    }
+  };
+  const pageTabs = (page) => PAGES[page].tabs;
+
+  /* ---------- 扁平化纯色 SVG 图标（Lucide 风格，stroke 随 currentColor） ---------- */
+  const ICONS = {
+    mealplan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    recipes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>',
+    ingredients: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
+    principles: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+    blacklist: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+    safety: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+  };
 
   /* ---------- 工具 ---------- */
   const $ = (sel) => document.querySelector(sel);
@@ -77,27 +115,27 @@ const App = (() => {
     return list;
   }
 
-  /* ---------- 渲染：顶部阶段 tab ---------- */
+  /* ---------- 渲染：底部导航 ---------- */
+  function renderBottomNav() {
+    document.querySelectorAll('#bottomNav [data-nav]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.nav === currentPage);
+    });
+  }
+
+  /* ---------- 渲染：顶部阶段 tab（纯文字，无 emoji） ---------- */
   function renderStageTabs() {
     $('#stageTabs').innerHTML = STAGES.map(s => `
       <button class="stage-tab ${s.id === activeStageId ? 'active' : ''}" data-stage="${s.id}">
-        <span class="emoji">${s.emoji}</span>${s.label}
+        ${esc(s.label)}
       </button>
     `).join('');
   }
 
-  /* ---------- 渲染：板块 tab ---------- */
+  /* ---------- 渲染：板块 tab（SVG 图标在文字左边） ---------- */
   function renderSectionTabs() {
-    const tabs = [
-      { id: 'principles', label: '核心原则', emoji: '📖' },
-      { id: 'mealplan', label: '每周菜单', emoji: '📅' },
-      { id: 'recipes', label: '选菜谱', emoji: '🍽️' },
-      { id: 'ingredients', label: '按食材选', emoji: '🥕' },
-      { id: 'blacklist', label: '红黑榜', emoji: '🚦' }
-    ];
-    $('#sectionTabs').innerHTML = tabs.map(t => `
+    $('#sectionTabs').innerHTML = pageTabs(currentPage).map(t => `
       <button class="stage-tab ${t.id === activeTab ? 'active' : ''}" data-section="${t.id}">
-        <span class="emoji">${t.emoji}</span>${t.label}
+        <span class="icon">${ICONS[t.id] || ''}</span><span>${esc(t.label)}</span>
       </button>
     `).join('');
   }
@@ -353,7 +391,7 @@ const App = (() => {
     `;
   }
 
-  /* ---------- 渲染：安全原则独立页 ---------- */
+  /* ---------- 渲染：安全原则 ---------- */
   function renderSafety() {
     const sections = SAFETY_SECTIONS.map(s => `
       <div class="safety-section ${s.level}">
@@ -371,7 +409,6 @@ const App = (() => {
       </div>
     `).join('');
     return `
-      <button class="back-btn" onclick="App.goHome()">← 返回首页</button>
       ${sections}
       <div class="disclaimer">${esc(DISCLAIMER)}</div>
     `;
@@ -380,24 +417,30 @@ const App = (() => {
   /* ---------- 主渲染 ---------- */
   function render() {
     const main = $('#main');
+    const isHome = currentPage === 'home';
+
+    renderBottomNav();
     renderStageTabs();
     renderSectionTabs();
 
-    if (currentRecipeId) {
-      main.innerHTML = renderRecipeDetail();
-      return;
-    }
-    if (activeTab === 'safety') {
-      main.innerHTML = renderSafety();
-      return;
-    }
+    $('#searchBar').style.display = isHome ? '' : 'none';
 
     let content = '';
-    if (activeTab === 'principles') content = renderPrinciples();
-    else if (activeTab === 'mealplan') content = renderMealPlan();
-    else if (activeTab === 'recipes') content = renderRecipes();
-    else if (activeTab === 'ingredients') content = renderIngredientPicker();
-    else if (activeTab === 'blacklist') content = renderBlacklist();
+    if (currentRecipeId) {
+      content = renderRecipeDetail();
+    } else if (activeTab === 'principles') {
+      content = renderPrinciples();
+    } else if (activeTab === 'mealplan') {
+      content = renderMealPlan();
+    } else if (activeTab === 'recipes') {
+      content = renderRecipes();
+    } else if (activeTab === 'ingredients') {
+      content = renderIngredientPicker();
+    } else if (activeTab === 'blacklist') {
+      content = renderBlacklist();
+    } else if (activeTab === 'safety') {
+      content = renderSafety();
+    }
     main.innerHTML = content;
   }
 
@@ -449,11 +492,10 @@ const App = (() => {
       }
     });
 
-    const search = $('#searchInput');
-    search.addEventListener('input', (e) => {
+    $('#searchInput').addEventListener('input', (e) => {
       searchKeyword = e.target.value.trim();
+      currentPage = 'home';
       activeTab = 'recipes';
-      renderSectionTabs();
       render();
     });
 
@@ -462,8 +504,8 @@ const App = (() => {
       if (!btn) return;
       const nav = btn.dataset.nav;
       currentRecipeId = null;
-      if (nav === 'safety') { activeTab = 'safety'; }
-      else if (nav === 'home') { activeTab = 'principles'; }
+      currentPage = nav;
+      activeTab = pageTabs(nav)[0].id;
       window.scrollTo(0, 0);
       render();
     });
@@ -474,18 +516,13 @@ const App = (() => {
     currentRecipeId = null;
     render();
   }
-  function goHome() {
-    currentRecipeId = null;
-    activeTab = 'principles';
-    render();
-  }
 
   function init() {
     bindEvents();
     render();
   }
 
-  return { init, goBack, goHome };
+  return { init, goBack };
 })();
 
 document.addEventListener('DOMContentLoaded', App.init);
