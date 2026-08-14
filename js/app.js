@@ -264,22 +264,24 @@ const App = (() => {
     }
 
     return `
-      <section class="greeting page-enter">
-        <div class="greeting-kicker">${esc(stage.label)} · ${stage.ageMin}–${stage.ageMax}个月</div>
-        <h1 class="greeting-title">今天吃什么？</h1>
-        <p class="greeting-sub">${esc(stage.headline)}。本月龄食物性状：${esc(stage.texture)}</p>
-      </section>
+      <div class="home-today page-enter">
+        <section class="greeting">
+          <div class="greeting-kicker">${esc(stage.label)} · ${stage.ageMin}–${stage.ageMax}个月</div>
+          <h1 class="greeting-title">今天吃什么？</h1>
+          <p class="greeting-sub">${esc(stage.headline)}。本月龄食物性状：${esc(stage.texture)}</p>
+        </section>
 
-      <div class="section-block">
-        ${featuredHtml}
+        <section class="section-block home-featured">
+          ${featuredHtml}
+        </section>
+
+        <section class="section-block home-quick">
+          ${sectionHead('快捷找菜')}
+          <div class="quick-grid">${quickHtml}</div>
+        </section>
+
+        <section class="home-menu">${todayMealsHtml}</section>
       </div>
-
-      <div class="section-block">
-        ${sectionHead('快捷找菜')}
-        <div class="quick-grid">${quickHtml}</div>
-      </div>
-
-      ${todayMealsHtml}
     `;
   }
 

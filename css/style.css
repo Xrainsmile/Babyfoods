@@ -1323,12 +1323,65 @@ h1, h2, h3 { line-height: 1.2; }
   .day-view, .day-strip { display: none; }
   .week-view { display: block; }
 }
-/* 桌面：正文加宽 */
+/* 桌面：从“放大版手机”改成双栏工作台 */
 @media (min-width: 1024px) {
-  .page, .app-header, .nav-primary, .section-tabs { max-width: 960px; }
-  .page.page-detail { max-width: 720px; }
+  .page, .app-header, .nav-primary, .section-tabs { max-width: 1120px; }
+  .page { padding-top: var(--space-5); padding-bottom: var(--space-7); }
+  .page.page-detail { max-width: 760px; }
   .ing-grid { grid-template-columns: repeat(6, 1fr); }
   .recipe-row:hover { background: var(--surface); }
+
+  /* 首页：推荐内容为主列，快捷找菜和今日菜单成为右侧工具栏 */
+  .home-today {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(330px, .8fr);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+  .home-today .greeting {
+    grid-column: 1 / -1;
+    padding-top: 0;
+  }
+  .home-today .home-featured { grid-column: 1; margin-top: var(--space-5); }
+  .home-today .home-featured .fv-lg { height: 252px; }
+  .home-today .home-quick {
+    grid-column: 2;
+    margin-top: var(--space-5);
+    padding: var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-xl);
+  }
+  .home-today .home-quick .quick-grid { grid-template-columns: repeat(2, 1fr); }
+  .home-today .home-menu { grid-column: 2; }
+  .home-today .home-menu .section-block { margin-top: var(--space-4); }
+
+  /* 桌面底部导航缩为悬浮胶囊，避免横跨屏幕造成空与怪 */
+  .bottom-nav {
+    left: 50%; right: auto; bottom: 24px;
+    width: auto;
+    transform: translateX(-50%);
+    padding: 6px;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-3);
+    gap: 4px;
+  }
+  .bottom-nav button {
+    flex: none;
+    flex-direction: row;
+    gap: 7px;
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: var(--text-sm);
+  }
+  .bottom-nav .bn-icon { width: 28px; height: 28px; }
+  .bottom-nav button.active .bn-icon { background: transparent; }
+}
+
+/* 宽屏：列表和菜单使用更舒适的可读宽度，不无限拉长 */
+@media (min-width: 1280px) {
+  .recipe-list, .week-table, .page > .page-enter { max-width: 1040px; margin-left: auto; margin-right: auto; }
 }
 /* 桌面 hover 增强 */
 @media (hover: hover) {
